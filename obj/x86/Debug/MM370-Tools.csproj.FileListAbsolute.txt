@@ -1,0 +1,10 @@
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\bin\x86\Debug\MM370-Tools.exe
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\bin\x86\Debug\MM370-Tools.pdb
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\obj\x86\Debug\MM370-Tools.csprojAssemblyReference.cache
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\obj\x86\Debug\MM370_Tools.FrmMain.resources
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\obj\x86\Debug\MM370_Tools.Properties.Resources.resources
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\obj\x86\Debug\MM370-Tools.csproj.GenerateResource.cache
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\obj\x86\Debug\MM370-Tools.csproj.CoreCompileInputs.cache
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\obj\x86\Debug\MM370-Tools.exe
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\obj\x86\Debug\MM370-Tools.pdb
+E:\xiajr_work\FY20项目\MM370-Tools（c#）\MM370-Tools\obj\x86\Debug\MM370_Tools.FrmConfig.resources
