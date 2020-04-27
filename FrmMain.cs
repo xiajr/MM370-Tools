@@ -756,14 +756,18 @@ namespace MM370_Tools
         {
             string bCmd;
             string bHeader;
+            /*
             if (recvbuffer.Length<18)
             {
                 //数据长度不足，返回
                 iRecvBufferOffest = 0;
                 return;
             }
+            */
             recvbuffer.CopyTo(analyData, iRecvBufferOffest);
             iRecvBufferOffest += recvbuffer.Length;
+            if (iRecvBufferOffest < 18)
+            { return; }
         DoChkHeader:
             bCmd = analyData[0];
             bHeader = analyData[1];
@@ -778,6 +782,9 @@ namespace MM370_Tools
             }
             else if((bCmd == "!01")&&bHeader.Contains("0001"))
             {
+                //长度不足18，退出方法
+                if (iRecvBufferOffest < 18)
+                { return; }
                 //bCmd=“!01”时，为测量数据
                 //bHeader="0001"为MeasCurrent
                 txtSchNo.Text = analyData[1].Substring(5);
