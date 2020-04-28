@@ -576,7 +576,7 @@ namespace MM370_Tools
                         MessageBox.Show("No Data Received!", "sio_read", MessageBoxButtons.OKCancel);
                         this.Cursor = Cursors.Default;
                         return;
-                    }  
+                    }
                 }
                 strRecvPara = Encoding.Default.GetString(byteRecvPara);
                 string[] delimiters = { ":", "," };
@@ -741,83 +741,73 @@ namespace MM370_Tools
                 if (lenMeas > 0)
                 {
                     string strReadMeas = Encoding.Default.GetString(byteReadMeas);
-                    string[] delimiters = { ",","\r\n" };
+                    string[] delimiters = { ",", "\r\n" };
                     string[] recvbuffer = strReadMeas.Split(delimiters, StringSplitOptions.None);
-                    this.Invoke(delRead, new object[] { recvbuffer });
-                    Thread.Sleep(200);
-                }   
+                    string bCmd;
+                    string bHeader;
+                    recvbuffer.CopyTo(analyData, iRecvBufferOffest);
+                    iRecvBufferOffest += recvbuffer.Length;
+                    if (iRecvBufferOffest < 18)
+                    { return; }
+                DoChkHeader:
+                    bCmd = analyData[0];
+                    bHeader = analyData[1];
+                    if (bCmd != "!01")
+                    {
+                        //搜索“!01”开头的数组
+                        Array.Copy(analyData, 1, analyData, 0, iRecvBufferOffest - 1);
+                        iRecvBufferOffest -= 1;
+                        if (iRecvBufferOffest > 2)
+                        { goto DoChkHeader; }
+                        return;
+                    }
+                    if ((bCmd == "!01") && bHeader.Contains("0001"))
+                    {
+                        //bCmd=“!01”时，为测量数据
+                        //bHeader="0001"为MeasCurrent
+                        //长度不足18，退出方法
+                        if (iRecvBufferOffest < 18)
+                        { return; }
+                        this.Invoke(delRead, new object[] { analyData });
+                        Thread.Sleep(200);
+                    }  
+                }
+
             }
         }
         /// <summary>
         /// 测量数据UI显示
         /// </summary>
         /// <param name="recvbuffer"></param>
-        private void ShowData(string[] recvbuffer)
+        private void ShowData(string[] analyData)
         {
-            string bCmd;
-            string bHeader;
-            /*
-            if (recvbuffer.Length<18)
+            txtSchNo.Text = analyData[1].Substring(5);
+            string strDt = analyData[2];
+            string strTotalCurr = analyData[5];
+            string strWeldCyc = analyData[14];
+            string strCount = analyData[17];
+            //  写入LISTVIEW   
+            if (strCount != counts)
             {
-                //数据长度不足，返回
-                iRecvBufferOffest = 0;
-                return;
-            }
-            */
-            recvbuffer.CopyTo(analyData, iRecvBufferOffest);
-            iRecvBufferOffest += recvbuffer.Length;
-            if (iRecvBufferOffest < 18)
-            { return; }
-        DoChkHeader:
-            bCmd = analyData[0];
-            bHeader = analyData[1];
-            if (bCmd != "!01")
-            {
-                //搜索“!01”开头的数组
-                Array.Copy(analyData, 1, analyData, 0, iRecvBufferOffest-1);
-                iRecvBufferOffest -= 1;
-                if (iRecvBufferOffest > 2)
-                { goto DoChkHeader; }
-                return; 
-            }
-            else if((bCmd == "!01")&&bHeader.Contains("0001"))
-            {
-                //长度不足18，退出方法
-                if (iRecvBufferOffest < 18)
-                { return; }
-                //bCmd=“!01”时，为测量数据
-                //bHeader="0001"为MeasCurrent
-                txtSchNo.Text = analyData[1].Substring(5);
-                string strDt = analyData[2];
-                string strTotalCurr = analyData[5];
-                string strWeldCyc = analyData[14];
-                string strCount = analyData[17];
-                //  写入LISTVIEW   
-                if (strCount != counts)
+                counts = strCount;
+                lvMeas.BeginUpdate();
                 {
-                    counts = strCount;
-                    lvMeas.BeginUpdate();
+                    ListViewItem list = new ListViewItem
                     {
-                        ListViewItem list = new ListViewItem
-                        {
-                            ImageIndex = r,
-                            Text = r.ToString()
-                        };
-                        list.SubItems.Add(strTotalCurr);
-                        list.SubItems.Add(strWeldCyc);
-                        list.SubItems.Add(strCount);
-                        list.SubItems.Add(strDt);
-                        lvMeas.Items.Add(list);
-                        r++;
-                    }
-                    lvMeas.EndUpdate();
+                        ImageIndex = r,
+                        Text = r.ToString()
+                    };
+                    list.SubItems.Add(strTotalCurr);
+                    list.SubItems.Add(strWeldCyc);
+                    list.SubItems.Add(strCount);
+                    list.SubItems.Add(strDt);
+                    lvMeas.Items.Add(list);
+                    r++;
                 }
-                Array.Copy(analyData, 18, analyData, 0, iRecvBufferOffest - 18);
-                iRecvBufferOffest -= 18;
-                if (iRecvBufferOffest > 2)
-                { goto DoChkHeader; }
-                return;
+                lvMeas.EndUpdate();
             }
+            Array.Copy(analyData, 18, analyData, 0, iRecvBufferOffest - 18);
+            iRecvBufferOffest -= 18;
         }
         /// <summary>
         /// 导出EXCEL文件
